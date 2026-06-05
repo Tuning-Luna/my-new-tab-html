@@ -1,60 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-
-const logoRef = ref<HTMLDivElement | null>(null);
-const typingRef = ref<HTMLDivElement | null>(null);
-
-const TEXT = "Always Learning, Always building.";
-const TYPING_SPEED = 130;
-
-function typeWriter(el: HTMLElement) {
-  let index = 0;
-  let pausing = false;
-
-  setInterval(() => {
-    if (pausing) return;
-    el.textContent = TEXT.slice(0, index++);
-    if (index > TEXT.length) {
-      pausing = true;
-      setTimeout(() => { index = 0; pausing = false; }, 2000);
-    }
-  }, TYPING_SPEED);
-}
-
-onMounted(() => {
-  const logo = logoRef.value;
-  if (!logo) return;
-
-  logo.addEventListener('mousemove', (e) => {
-    const { left, top, width, height } = logo.getBoundingClientRect();
-    const px = (e.clientX - left - width / 2) / (width / 2);
-    const py = (e.clientY - top - height / 2) / (height / 2);
-    logo.style.setProperty('--rotateX', `${-30 * py}deg`);
-    logo.style.setProperty('--rotateY', `${30 * px}deg`);
-  });
-
-  logo.addEventListener('mouseleave', () => {
-    logo.style.setProperty('--rotateX', '0deg');
-    logo.style.setProperty('--rotateY', '0deg');
-  });
-
-  if (typingRef.value) typeWriter(typingRef.value);
-});
-
-function goGoogle() {
-  window.location.href = 'https://www.google.com';
-}
+import Logo3D from './components/Logo3D.vue'
+import TypeWriter from './components/TypeWriter.vue'
 </script>
 
 <template>
   <div class="main">
-    <div class="logo" ref="logoRef">
-      <img class="google" src="./assets/google_logo.svg" alt="logo" @click="goGoogle" />
-      <div class="avatar">
-        <img src="./assets/Tuning.png" alt="" />
-      </div>
-    </div>
-    <div class="typing" ref="typingRef"></div>
+    <Logo3D />
+    <TypeWriter />
   </div>
 </template>
 
@@ -123,146 +75,13 @@ function goGoogle() {
   }
 }
 
-.logo {
-  position: relative;
-  z-index: 2;
-  --rotateX: 0deg;
-  --rotateY: 0deg;
-  transform-style: preserve-3d;
-
-  .google {
-    width: 400px;
-    height: auto;
-    transition: all 0.4s ease;
-    transform: rotateX(var(--rotateX)) rotateY(var(--rotateY));
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
-    animation: idle 10s linear infinite;
-    transform-style: preserve-3d;
-    will-change: transform;
-
-    &:hover {
-      transform: scale(1.1) rotateX(var(--rotateX)) rotateY(var(--rotateY)) translateZ(-25px);
-      filter:
-        drop-shadow(0 0 6px rgba(0, 255, 255, 0.7)) drop-shadow(0 0 12px rgba(0, 200, 255, 0.5)) drop-shadow(0 0 20px rgba(0, 150, 255, 0.4));
-    }
-  }
-}
-
-// ✅ 移到 .main 下，用 absolute 定位相对于 .main，位置固定可靠
-.typing {
-  position: absolute;
-  bottom: 12vh;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2.8rem;
-  color: #1f9797;
-  font-family: monospace;
-  white-space: nowrap;
-  z-index: 2;
-}
-
-.avatar {
-  position: absolute;
-  bottom: -240px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  overflow: visible;
-  z-index: 3;
-
-
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 4px solid #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
-    display: block;
-    object-fit: cover; // ✅ 保持比例，裁剪填满圆形区域
-    object-position: center; // 裁剪居中，可按需调整
-  }
-
-  // ✅ 用 inset 负值扩展，圆心始终与父元素中心对齐
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -12px; // 向外扩展固定像素，不受宽高百分比影响
-    border-radius: 50%;
-    border: 2px solid rgba(0, 255, 255, 0.5);
-    animation: ripple 2s infinite linear;
-    pointer-events: none;
-  }
-}
-
 @keyframes nebulaMove {
-  from {
-    background-position: 0% 0%, 100% 100%;
-  }
-
-  to {
-    background-position: 100% 100%, 0% 0%;
-  }
+  from { background-position: 0% 0%, 100% 100%; }
+  to { background-position: 100% 100%, 0% 0%; }
 }
 
 @keyframes starsMove {
-  from {
-    background-position: 0 0, 0 0, 0 0;
-  }
-
-  to {
-    background-position: 1000px 600px, -800px 600px, 600px -400px;
-  }
-}
-
-@keyframes idle {
-  0% {
-    transform: rotateX(10deg) rotateY(-10deg);
-  }
-
-  12% {
-    transform: rotateX(0deg) rotateY(-10deg);
-  }
-
-  25% {
-    transform: rotateX(-10deg) rotateY(-10deg);
-  }
-
-  38% {
-    transform: rotateX(-10deg) rotateY(0deg);
-  }
-
-  50% {
-    transform: rotateX(-10deg) rotateY(10deg);
-  }
-
-  62% {
-    transform: rotateX(0deg) rotateY(10deg);
-  }
-
-  75% {
-    transform: rotateX(10deg) rotateY(10deg);
-  }
-
-  87% {
-    transform: rotateX(10deg) rotateY(0deg);
-  }
-
-  100% {
-    transform: rotateX(10deg) rotateY(-10deg);
-  }
-}
-
-@keyframes ripple {
-  0% {
-    inset: 0px;
-    opacity: 1;
-  }
-
-  100% {
-    inset: -40px;
-    opacity: 0;
-  }
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: 1000px 600px, -800px 600px, 600px -400px; }
 }
 </style>
