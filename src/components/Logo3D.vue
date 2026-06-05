@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const logoRef = ref<HTMLDivElement | null>(null)
 
@@ -11,17 +11,25 @@ onMounted(() => {
   const logo = logoRef.value
   if (!logo) return
 
-  logo.addEventListener('mousemove', (e) => {
+  const onMove = (e: MouseEvent) => {
     const { left, top, width, height } = logo.getBoundingClientRect()
     const px = (e.clientX - left - width / 2) / (width / 2)
     const py = (e.clientY - top - height / 2) / (height / 2)
     logo.style.setProperty('--rotateX', `${-30 * py}deg`)
     logo.style.setProperty('--rotateY', `${30 * px}deg`)
-  })
+  }
 
-  logo.addEventListener('mouseleave', () => {
+  const onLeave = () => {
     logo.style.setProperty('--rotateX', '0deg')
     logo.style.setProperty('--rotateY', '0deg')
+  }
+
+  logo.addEventListener('mousemove', onMove)
+  logo.addEventListener('mouseleave', onLeave)
+
+  onUnmounted(() => {
+    logo.removeEventListener('mousemove', onMove)
+    logo.removeEventListener('mouseleave', onLeave)
   })
 })
 </script>

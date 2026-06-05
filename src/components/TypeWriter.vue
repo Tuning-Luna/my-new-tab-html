@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const props = withDefaults(defineProps<{
   text?: string
@@ -10,23 +10,30 @@ const props = withDefaults(defineProps<{
 })
 
 const typingRef = ref<HTMLDivElement | null>(null)
+let intervalId: ReturnType<typeof setInterval> | null = null
+let timeoutId: ReturnType<typeof setTimeout> | null = null
 
 function typeWriter(el: HTMLElement) {
   let index = 0
   let pausing = false
 
-  setInterval(() => {
+  intervalId = setInterval(() => {
     if (pausing) return
     el.textContent = props.text.slice(0, index++)
     if (index > props.text.length) {
       pausing = true
-      setTimeout(() => { index = 0; pausing = false }, 2000)
+      timeoutId = setTimeout(() => { index = 0; pausing = false }, 2000)
     }
   }, props.speed)
 }
 
 onMounted(() => {
   if (typingRef.value) typeWriter(typingRef.value)
+})
+
+onUnmounted(() => {
+  if (intervalId !== null) clearInterval(intervalId)
+  if (timeoutId !== null) clearTimeout(timeoutId)
 })
 </script>
 
