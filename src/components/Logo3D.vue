@@ -49,7 +49,7 @@ onMounted(() => {
     transition: all 0.4s ease;
     transform: rotateX(var(--rotateX)) rotateY(var(--rotateY));
     filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
-    animation: idle 10s linear infinite;
+    animation: idle 12s ease-in-out infinite;
     transform-style: preserve-3d;
     will-change: transform;
 
@@ -95,15 +95,10 @@ onMounted(() => {
 }
 
 @keyframes idle {
-  0% { transform: rotateX(10deg) rotateY(-10deg); }
-  12% { transform: rotateX(0deg) rotateY(-10deg); }
-  25% { transform: rotateX(-10deg) rotateY(-10deg); }
-  38% { transform: rotateX(-10deg) rotateY(0deg); }
-  50% { transform: rotateX(-10deg) rotateY(10deg); }
-  62% { transform: rotateX(0deg) rotateY(10deg); }
-  75% { transform: rotateX(10deg) rotateY(10deg); }
-  87% { transform: rotateX(10deg) rotateY(0deg); }
-  100% { transform: rotateX(10deg) rotateY(-10deg); }
+  0%, 100% { transform: rotateX(6deg) rotateY(-6deg); }
+  25% { transform: rotateX(-6deg) rotateY(-6deg); }
+  50% { transform: rotateX(-6deg) rotateY(6deg); }
+  75% { transform: rotateX(6deg) rotateY(6deg); }
 }
 
 @keyframes ripple {
